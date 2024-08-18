@@ -130,6 +130,9 @@ ENV/
 env.bak/
 venv.bak/
 
+# Vscode
+*.code-workspace
+
 # Spyder project settings
 .spyderproject
 .spyproject
