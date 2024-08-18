@@ -41,6 +41,7 @@ BASE_APPS = [
 
 PROJECT_APPS = [
     "api",
+    "products",
 ]
 
 INSTALLED_APPS = BASE_APPS + PROJECT_APPS
