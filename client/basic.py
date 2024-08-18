@@ -1,7 +1,7 @@
 import requests
 
 # Declare an endpoint
-endpoint = "http://localhost:8000/"
+endpoint = "http://localhost:8000/api"
 
 # make a http request to the endpoint
 response = requests.get(endpoint)
