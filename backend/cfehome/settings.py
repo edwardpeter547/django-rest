@@ -44,7 +44,9 @@ PROJECT_APPS = [
     "products",
 ]
 
-INSTALLED_APPS = BASE_APPS + PROJECT_APPS
+THIRD_PARTY_APPS = ["rest_framework"]
+
+INSTALLED_APPS = BASE_APPS + THIRD_PARTY_APPS + PROJECT_APPS
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
