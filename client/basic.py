@@ -4,10 +4,9 @@ import requests
 endpoint = "http://localhost:8000/api/"
 
 # make a http request to the endpoint
-response = requests.get(
+response = requests.post(
     endpoint,
-    params={"abc": 123},
-    json={"name": "Peter Edward"},
+    json={"content": "Paw-Paw"},
 )
 
 # HTTP Request -> HTML
