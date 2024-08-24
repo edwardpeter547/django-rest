@@ -1,6 +1,11 @@
+from dataclasses import fields
+from pyexpat import model
 from typing_extensions import ReadOnly
 from rest_framework import serializers
 from products.models import Product
+
+
+all_fields = ["id", "title", "content", "price", "my_discount"]
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -8,14 +13,8 @@ class ProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = [
-            "id",
-            "title",
-            "content",
-            "price",
-            "sale_price",
-            "my_discount",
-        ]
+        # all_fields.extend(["sale_price", "my_discount"])
+        fields = all_fields
 
     def get_my_discount(self, obj):
         if not hasattr(obj, "id"):
