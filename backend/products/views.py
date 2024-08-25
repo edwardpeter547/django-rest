@@ -1,8 +1,11 @@
+from urllib import response
+from django.forms import model_to_dict
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, mixins
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from yaml import serialize
 from products.models import Product
 from products.serializers import ProductSerializer
 from rest_framework import status
@@ -78,3 +81,41 @@ def list_create_view(request, *args, **kwargs):
             {"invalid": "invalid data, cannot save!"},
             status=status.HTTP_400_BAD_REQUEST,
         )
+
+
+@api_view(["DELETE", "PUT"])
+def update_delete_view(request, *args, **kwargs):
+
+    method = request.method
+
+    if method == "DELETE":
+        pk = kwargs.get("pk", None)
+        if pk is not None:
+            obj = get_object_or_404(Product, pk=pk)
+            print(obj, type(obj))
+            # obj.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    else:
+
+        pk = kwargs.get("pk", None)
+        request_data = request.data
+        if pk is not None:
+            data = get_object_or_404(Product, pk=pk)
+            if "title" not in request_data.keys():
+                request_data["title"] = data.title
+
+            serializer = ProductSerializer(data=request_data, many=False)
+            if serializer.is_valid():
+                serializer.update(
+                    instance=data, validated_data=serializer.validated_data
+                )
+                return Response(
+                    serializer.data,
+                    status=status.HTTP_200_OK,
+                )
+            return Response(
+                {"update": "invalid data"}, status=status.HTTP_400_BAD_REQUEST
+            )
+        return Response({"update": "invalid data"}, status=status.HTTP_400_BAD_REQUEST)
