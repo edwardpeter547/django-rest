@@ -22,3 +22,14 @@ class ProductCreateApiView(generics.CreateAPIView):
 
 
 product_create_api_view = ProductCreateApiView.as_view()
+
+
+class ProductListApiView(generics.ListAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
+
+product_list_api_view = ProductListApiView.as_view()
