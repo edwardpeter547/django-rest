@@ -1,14 +1,14 @@
 from urllib import response
+
 from django.forms import model_to_dict
 from django.http import Http404
 from django.shortcuts import get_object_or_404
-from rest_framework import generics, mixins
+from products.models import Product
+from products.serializers import ProductSerializer
+from rest_framework import generics, mixins, status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from yaml import serialize
-from products.models import Product
-from products.serializers import ProductSerializer
-from rest_framework import status
 
 
 class ProductDetailApiView(generics.RetrieveAPIView):
@@ -52,6 +52,56 @@ class ProductListCreateApiView(generics.ListCreateAPIView):
 
 
 product_list_create_api_view = ProductListCreateApiView.as_view()
+
+
+# using generics.GenericAPIView and Mixins
+class ProductMixinView(
+    generics.GenericAPIView,
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.CreateModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
+):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    lookup_field = "pk"
+
+    def get(self, request, *args, **kwargs):
+        pk = kwargs.get("pk", None)
+        print("this is the pk", pk)
+        if pk is not None:
+            return self.retrieve(request, *args, **kwargs)
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        print(args, kwargs)
+        return self.update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
+
+    def perform_destroy(self, instance):
+        print(type(instance), instance)
+        instance.delete()
+
+    def perform_update(self, serializer):
+        title = serializer.validated_data.get("title")
+        content = serializer.validated_data.get("content", None)
+        if not content:
+            content = title
+
+        serializer.save(content=content)
+
+    def perform_create(self, serializer):
+        title = serializer.validated_data.get("title")
+        content = serializer.validated_data.get("content", None)
+        if not content:
+            content = title
+        serializer.save(content=content)
 
 
 @api_view(["POST", "GET"])
