@@ -21,6 +21,8 @@ product_detail_api_view = ProductDetailApiView.as_view()
 class ProductUpdateApiView(generics.UpdateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+    authentication_classes = [authentication.SessionAuthentication]
+    permission_classes = [permissions.DjangoModelPermissions]
     lookup_field = "pk"
 
     def perform_update(self, serializer):
@@ -44,12 +46,10 @@ class ProductListCreateApiView(generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     authentication_classes = [authentication.SessionAuthentication]
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.DjangoModelPermissions]
 
     def get(self, request, *args, **kwargs):
-        user = request.user
-        print("this is the user", user)
-        return self.retrieve(request, *args, **kwargs)
+        return self.list(request, *args, **kwargs)
 
     def perform_create(self, serializer):
         # serializer.save(user=self.request.user)
