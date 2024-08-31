@@ -4,6 +4,7 @@ from django.forms import model_to_dict
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from products.models import Product
+from products.permissions import IsStaffEditorPermission
 from products.serializers import ProductSerializer
 from rest_framework import authentication, generics, mixins, permissions, status
 from rest_framework.decorators import api_view
@@ -46,7 +47,7 @@ class ProductListCreateApiView(generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     authentication_classes = [authentication.SessionAuthentication]
-    permission_classes = [permissions.DjangoModelPermissions]
+    permission_classes = [permissions.IsAdminUser, IsStaffEditorPermission]
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
