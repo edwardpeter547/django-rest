@@ -1,8 +1,6 @@
-from email import header
 from getpass import getpass
 
 import requests
-from settings import config
 
 auth_endpoint = "http://localhost:8000/api/auth/"
 username = input("Enter Username:\n")
