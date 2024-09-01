@@ -1,5 +1,6 @@
 from urllib import response
 
+from api.authentication import TokenAuthentication
 from django.forms import model_to_dict
 from django.http import Http404
 from django.shortcuts import get_object_or_404
@@ -46,7 +47,10 @@ class ProductDeleteApiView(generics.DestroyAPIView):
 class ProductListCreateApiView(generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    authentication_classes = [authentication.SessionAuthentication]
+    authentication_classes = [
+        TokenAuthentication,
+        authentication.SessionAuthentication,
+    ]
     permission_classes = [permissions.IsAdminUser, IsStaffEditorPermission]
 
     def get(self, request, *args, **kwargs):
