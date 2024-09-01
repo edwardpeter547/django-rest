@@ -15,6 +15,7 @@ from rest_framework.response import Response
 class ProductDetailApiView(generics.RetrieveAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+    permission_classes = [permissions.IsAdminUser, IsStaffEditorPermission]
 
 
 product_detail_api_view = ProductDetailApiView.as_view()
@@ -23,8 +24,7 @@ product_detail_api_view = ProductDetailApiView.as_view()
 class ProductUpdateApiView(generics.UpdateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    authentication_classes = [authentication.SessionAuthentication]
-    permission_classes = [permissions.DjangoModelPermissions]
+    permission_classes = [permissions.IsAdminUser, IsStaffEditorPermission]
     lookup_field = "pk"
 
     def perform_update(self, serializer):
@@ -37,6 +37,7 @@ class ProductUpdateApiView(generics.UpdateAPIView):
 class ProductDeleteApiView(generics.DestroyAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+    permission_classes = [permissions.IsAdminUser, IsStaffEditorPermission]
     lookup_field = "pk"
 
     def perform_destroy(self, instance):
@@ -47,10 +48,6 @@ class ProductDeleteApiView(generics.DestroyAPIView):
 class ProductListCreateApiView(generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    authentication_classes = [
-        TokenAuthentication,
-        authentication.SessionAuthentication,
-    ]
     permission_classes = [permissions.IsAdminUser, IsStaffEditorPermission]
 
     def get(self, request, *args, **kwargs):
