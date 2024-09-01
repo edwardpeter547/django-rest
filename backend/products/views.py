@@ -1,30 +1,25 @@
-from urllib import response
-
-from api.authentication import TokenAuthentication
+from api.mixins import IsStaffEditorPermissionMixin
 from django.forms import model_to_dict
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from products.models import Product
-from products.permissions import IsStaffEditorPermission
 from products.serializers import ProductSerializer
 from rest_framework import authentication, generics, mixins, permissions, status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 
-class ProductDetailApiView(generics.RetrieveAPIView):
+class ProductDetailApiView(generics.RetrieveAPIView, IsStaffEditorPermissionMixin):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    permission_classes = [permissions.IsAdminUser, IsStaffEditorPermission]
 
 
 product_detail_api_view = ProductDetailApiView.as_view()
 
 
-class ProductUpdateApiView(generics.UpdateAPIView):
+class ProductUpdateApiView(generics.UpdateAPIView, IsStaffEditorPermissionMixin):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    permission_classes = [permissions.IsAdminUser, IsStaffEditorPermission]
     lookup_field = "pk"
 
     def perform_update(self, serializer):
@@ -34,10 +29,9 @@ class ProductUpdateApiView(generics.UpdateAPIView):
             print(instance)
 
 
-class ProductDeleteApiView(generics.DestroyAPIView):
+class ProductDeleteApiView(generics.DestroyAPIView, IsStaffEditorPermissionMixin):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    permission_classes = [permissions.IsAdminUser, IsStaffEditorPermission]
     lookup_field = "pk"
 
     def perform_destroy(self, instance):
@@ -45,10 +39,11 @@ class ProductDeleteApiView(generics.DestroyAPIView):
         return super().perform_destroy(instance)
 
 
-class ProductListCreateApiView(generics.ListCreateAPIView):
+class ProductListCreateApiView(
+    generics.ListCreateAPIView, IsStaffEditorPermissionMixin
+):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    permission_classes = [permissions.IsAdminUser, IsStaffEditorPermission]
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
