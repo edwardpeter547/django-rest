@@ -1,9 +1,9 @@
 from dataclasses import fields
-from pyexpat import model
-from typing_extensions import ReadOnly
-from rest_framework import serializers
-from products.models import Product
 
+from products.models import Product
+from pyexpat import model
+from rest_framework import serializers
+from typing_extensions import ReadOnly
 
 all_fields = ["id", "title", "content", "price", "my_discount"]
 
