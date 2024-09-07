@@ -54,7 +54,9 @@ class ProductListCreateApiView(
     def perform_create(self, serializer):
         # serializer.save(user=self.request.user)
         title = serializer.validated_data.get("title")
+        email = serializer.validated_data.pop("email", None)
         content = serializer.validated_data.get("content", None)
+        print(f"this is the email = {email}")
         if not content:
             content = title
         serializer.save(content=content)
