@@ -2,6 +2,7 @@ from django.conf import settings
 from products.models import Product
 from rest_framework import serializers
 from rest_framework.reverse import reverse
+from products.validators import validate_title, unique_title_validator
 
 all_fields = [
     "id",
@@ -9,6 +10,7 @@ all_fields = [
     "item_url",
     "edit_url",
     "email",
+    "name",
     "title",
     "content",
     "price",
@@ -24,6 +26,8 @@ class ProductSerializer(serializers.ModelSerializer):
         view_name="api:products:update", lookup_field="pk"
     )
     email = serializers.EmailField(write_only=True)
+    title = serializers.CharField(validators=[unique_title_validator])
+    name = serializers.CharField(source="title", read_only=True)
 
     class Meta:
         model = Product
@@ -60,3 +64,24 @@ class ProductSerializer(serializers.ModelSerializer):
         print(f"This is the email = {email}")
         instance = super().update(instance, validated_data)
         return instance
+
+    # validate title
+    # def validate_title(self, value):
+    #     qs = Product.objects.filter(title__iexact=value)
+    #     if qs.exists():
+    #         raise serializers.ValidationError(f"The title {value} already exists")
+    #     return value
+
+    # suppose you want to validate based on the user
+    # in this special cases we want to write our validators
+    # inline in the serializer as demostrated below because of
+    # having access to the context and using the request object.
+
+    # def validate_title(self, value):
+    #     request = self.context.get("request", None)
+    #     if request is not None:
+    #         user = request.user
+    #     qs = Product.objects.filter(user=user, title__iexact=value)
+    #     if qs.exists():
+    #         raise serializers.ValidationError(f"The title {value} already exists")
+    #     return value
