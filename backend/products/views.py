@@ -9,7 +9,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 
-class ProductDetailApiView(generics.RetrieveAPIView, IsStaffEditorPermissionMixin):
+class ProductDetailApiView(IsStaffEditorPermissionMixin, generics.RetrieveAPIView, ):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
 
@@ -17,7 +17,7 @@ class ProductDetailApiView(generics.RetrieveAPIView, IsStaffEditorPermissionMixi
 product_detail_api_view = ProductDetailApiView.as_view()
 
 
-class ProductUpdateApiView(generics.UpdateAPIView, IsStaffEditorPermissionMixin):
+class ProductUpdateApiView(IsStaffEditorPermissionMixin, generics.UpdateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     lookup_field = "pk"
@@ -29,7 +29,7 @@ class ProductUpdateApiView(generics.UpdateAPIView, IsStaffEditorPermissionMixin)
             print(instance)
 
 
-class ProductDeleteApiView(generics.DestroyAPIView, IsStaffEditorPermissionMixin):
+class ProductDeleteApiView(IsStaffEditorPermissionMixin, generics.DestroyAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     lookup_field = "pk"
@@ -40,13 +40,16 @@ class ProductDeleteApiView(generics.DestroyAPIView, IsStaffEditorPermissionMixin
 
 
 class ProductListCreateApiView(
-    generics.ListCreateAPIView, IsStaffEditorPermissionMixin
+    IsStaffEditorPermissionMixin, generics.ListCreateAPIView 
 ):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
 
     def perform_create(self, serializer):
         # serializer.save(user=self.request.user)
