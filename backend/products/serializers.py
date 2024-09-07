@@ -8,6 +8,7 @@ all_fields = [
     "url",
     "item_url",
     "edit_url",
+    "email",
     "title",
     "content",
     "price",
@@ -22,6 +23,7 @@ class ProductSerializer(serializers.ModelSerializer):
     edit_url = serializers.HyperlinkedIdentityField(
         view_name="api:products:update", lookup_field="pk"
     )
+    email = serializers.EmailField(write_only=True)
 
     class Meta:
         model = Product
@@ -46,3 +48,15 @@ class ProductSerializer(serializers.ModelSerializer):
         if not isinstance(obj, Product):
             return None
         return obj.get_discount()
+
+    def create(self, validated_data):
+        # email = validated_data.pop("email", None)
+        instance = super().create(validated_data)
+        # print(instance)
+        return instance
+    
+    def update(self, instance, validated_data):
+        email = validated_data.pop("email", None)
+        print(f"This is the email = {email}")
+        instance = super().update(instance, validated_data)
+        return instance
