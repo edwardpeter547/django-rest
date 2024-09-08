@@ -3,10 +3,14 @@ from products.models import Product
 from rest_framework import serializers
 from rest_framework.reverse import reverse
 from products.validators import validate_title, unique_title_validator
+from api.serializers import UserPublicSerializer
 
 all_fields = [
     "id",
     "url",
+    "owner",
+    "user",
+    "my_user",
     "item_url",
     "edit_url",
     "email",
@@ -19,6 +23,8 @@ all_fields = [
 
 
 class ProductSerializer(serializers.ModelSerializer):
+    owner = UserPublicSerializer(source="user", read_only=True)
+    my_user = serializers.SerializerMethodField(read_only=True)
     my_discount = serializers.SerializerMethodField(read_only=True)
     url = serializers.SerializerMethodField(read_only=True)
     item_url = serializers.SerializerMethodField(read_only=True)
@@ -32,6 +38,12 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = all_fields
+
+    def get_my_user(self, obj):
+        return {
+            "username": obj.user.username,
+            "email": obj.user.email,
+        }
 
     def get_url(self, obj):
 
