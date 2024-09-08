@@ -9,12 +9,12 @@ all_fields = [
     "id",
     "url",
     "owner",
-    "user",
-    "my_user",
-    "item_url",
-    "edit_url",
-    "email",
-    "name",
+    # "user",
+    # "my_user",
+    # "item_url",
+    # "edit_url",
+    # "name",
+    # "email",
     "title",
     "content",
     "price",
@@ -24,40 +24,27 @@ all_fields = [
 
 class ProductSerializer(serializers.ModelSerializer):
     owner = UserPublicSerializer(source="user", read_only=True)
-    my_user = serializers.SerializerMethodField(read_only=True)
     my_discount = serializers.SerializerMethodField(read_only=True)
     url = serializers.SerializerMethodField(read_only=True)
-    item_url = serializers.SerializerMethodField(read_only=True)
-    edit_url = serializers.HyperlinkedIdentityField(
-        view_name="api:products:update", lookup_field="pk"
-    )
-    email = serializers.EmailField(write_only=True)
     title = serializers.CharField(validators=[unique_title_validator])
-    name = serializers.CharField(source="title", read_only=True)
+    # email = serializers.EmailField(write_only=True)
+    # my_user = serializers.SerializerMethodField(read_only=True)
+    # item_url = serializers.SerializerMethodField(read_only=True)
+    # edit_url = serializers.HyperlinkedIdentityField(
+    #     view_name="api:products:update", lookup_field="pk"
+    # )
+    # name = serializers.CharField(source="title", read_only=True)
 
     class Meta:
         model = Product
         fields = all_fields
 
-    def get_my_user(self, obj):
-        return {
-            "username": obj.user.username,
-            "email": obj.user.email,
-        }
-
     def get_url(self, obj):
-
         request = self.context.get("request", None)
         if request is None:
             return None
         return reverse("api:products:detail", kwargs={"pk": obj.pk}, request=request)
-
-    def get_item_url(self, obj):
-        request = self.context.get("request", None)
-        if request is not None:
-            return f"http://{request.get_host()}{obj.get_item_url()}"
-        return None
-
+    
     def get_my_discount(self, obj):
         if not hasattr(obj, "id"):
             return None
@@ -76,6 +63,18 @@ class ProductSerializer(serializers.ModelSerializer):
         print(f"This is the email = {email}")
         instance = super().update(instance, validated_data)
         return instance
+
+    # def get_my_user(self, obj):
+    #     return {
+    #         "username": obj.user.username,
+    #         "email": obj.user.email,
+    #     }
+
+    # def get_item_url(self, obj):
+    #     request = self.context.get("request", None)
+    #     if request is not None:
+    #         return f"http://{request.get_host()}{obj.get_item_url()}"
+    #     return None
 
     # validate title
     # def validate_title(self, value):
