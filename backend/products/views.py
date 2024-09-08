@@ -1,4 +1,4 @@
-from api.mixins import IsStaffEditorPermissionMixin
+from api.mixins import StaffEditorPermissionMixin, UserQuerySetMixin
 from django.forms import model_to_dict
 from django.http import Http404
 from django.shortcuts import get_object_or_404
@@ -9,7 +9,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 
-class ProductDetailApiView(IsStaffEditorPermissionMixin, generics.RetrieveAPIView, ):
+class ProductDetailApiView(UserQuerySetMixin, StaffEditorPermissionMixin, generics.RetrieveAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
 
@@ -17,7 +17,7 @@ class ProductDetailApiView(IsStaffEditorPermissionMixin, generics.RetrieveAPIVie
 product_detail_api_view = ProductDetailApiView.as_view()
 
 
-class ProductUpdateApiView(IsStaffEditorPermissionMixin, generics.UpdateAPIView):
+class ProductUpdateApiView(StaffEditorPermissionMixin, generics.UpdateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     lookup_field = "pk"
@@ -29,7 +29,7 @@ class ProductUpdateApiView(IsStaffEditorPermissionMixin, generics.UpdateAPIView)
             print(instance)
 
 
-class ProductDeleteApiView(IsStaffEditorPermissionMixin, generics.DestroyAPIView):
+class ProductDeleteApiView(StaffEditorPermissionMixin, generics.DestroyAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     lookup_field = "pk"
@@ -40,26 +40,32 @@ class ProductDeleteApiView(IsStaffEditorPermissionMixin, generics.DestroyAPIView
 
 
 class ProductListCreateApiView(
-    IsStaffEditorPermissionMixin, generics.ListCreateAPIView 
+    UserQuerySetMixin, StaffEditorPermissionMixin, generics.ListCreateAPIView 
 ):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
 
-    def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
+    # def get(self, request, *args, **kwargs):
+    #     return self.list(request, *args, **kwargs)
 
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
+    # def post(self, request, *args, **kwargs):
+    #     return self.create(request, *args, **kwargs)
+
+    # def get_queryset(self, *args, **kwargs):
+    #     qs = super().get_queryset(*args, **kwargs)
+    #     request = self.request
+    #     if not request.user.is_authenticated:
+    #         return Product.objects.none()
+    #     return qs.filter(user=request.user)
 
     def perform_create(self, serializer):
         # serializer.save(user=self.request.user)
         title = serializer.validated_data.get("title")
         email = serializer.validated_data.pop("email", None)
         content = serializer.validated_data.get("content", None)
-        print(f"this is the email = {email}")
         if not content:
             content = title
-        serializer.save(content=content)
+        serializer.save(user=self.request.user, content=content)
 
 
 product_list_create_api_view = ProductListCreateApiView.as_view()
