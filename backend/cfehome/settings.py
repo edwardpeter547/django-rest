@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,10 +21,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-0w2sphyc#m3#!c$9^tqk%%#&b*y3f@^&-5^^eb!7($cv@p@42r"
+SECRET_KEY = config("SECRET_KEY", default=None)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config("DEBUG", cast=bool, default=None)
 
 ALLOWED_HOSTS = []
 
@@ -147,6 +148,6 @@ REST_FRAMEWORK = {
 # algolia search settings.
 
 ALGOLIA = {
-  'APPLICATION_ID': 'C4CX0583AU',
-  'API_KEY': '27eeb54c2b9eba38d2bb885b093bc19c'
+  'APPLICATION_ID': config("ALGOLIA_APPLICATION_ID", default=None),
+  'API_KEY': config("ALGOLIA_API_KEY", default=None),
 }
