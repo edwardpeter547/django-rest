@@ -2,10 +2,13 @@ from django.db import models
 from django.db.models import Q
 from django.urls import reverse
 from django.conf import settings
+import random
 
 # Create your models here.
 
 User = settings.AUTH_USER_MODEL
+
+TAGS_MODEL_VALUES = ["electronics", "cars", "boats", "movies", "cameras"]
 
 # define a product queryset class
 class ProductQuerySet(models.QuerySet):
@@ -39,6 +42,9 @@ class Product(models.Model):
 
     objects = ProductManager()
 
+    def is_public(self):
+        return self.public
+
     @property
     def sale_price(self):
         return "%.2f" % (float(self.price) * 0.8)
@@ -48,6 +54,9 @@ class Product(models.Model):
 
     def get_item_url(self):
         return reverse("api:products:detail", args=[self.pk])
+    
+    def get_tags_list(self):
+        return [random.choice(TAGS_MODEL_VALUES)]
 
     def __str__(self):
         return f"{self.title}(title={self.title}, price={self.price})"
