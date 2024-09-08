@@ -45,7 +45,7 @@ PROJECT_APPS = [
     "search",
 ]
 
-THIRD_PARTY_APPS = ["rest_framework", "rest_framework.authtoken"]
+THIRD_PARTY_APPS = ["rest_framework", "rest_framework.authtoken", "algoliasearch_django",]
 
 INSTALLED_APPS = BASE_APPS + THIRD_PARTY_APPS + PROJECT_APPS
 
@@ -142,4 +142,11 @@ REST_FRAMEWORK = {
     ],
     "DEFAULT_PAGINATION_CLASS":"rest_framework.pagination.LimitOffsetPagination",
     "PAGE_SIZE": 5
+}
+
+# algolia search settings.
+
+ALGOLIA = {
+  'APPLICATION_ID': 'C4CX0583AU',
+  'API_KEY': '27eeb54c2b9eba38d2bb885b093bc19c'
 }
