@@ -15,8 +15,9 @@ all_fields = [
     # "edit_url",
     # "name",
     # "email",
+    # "content",
     "title",
-    "content",
+    "body",
     "price",
     "my_discount",
 ]
@@ -27,6 +28,7 @@ class ProductSerializer(serializers.ModelSerializer):
     my_discount = serializers.SerializerMethodField(read_only=True)
     url = serializers.SerializerMethodField(read_only=True)
     title = serializers.CharField(validators=[unique_title_validator])
+    body = serializers.CharField(source='title')
     # email = serializers.EmailField(write_only=True)
     # my_user = serializers.SerializerMethodField(read_only=True)
     # item_url = serializers.SerializerMethodField(read_only=True)

@@ -11,6 +11,7 @@ class SearchListView(generics.GenericAPIView):
         query = request.GET.get('q', None)
         tags = request.GET.get("tags", None)
         public = str(request.GET.get("public")) != "0"
+        kwargs["public"] = public
         if request.user.is_authenticated:
             user = request.user.username
             kwargs["user"] = user
