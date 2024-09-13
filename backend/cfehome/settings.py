@@ -47,13 +47,14 @@ PROJECT_APPS = [
     "search",
 ]
 
-THIRD_PARTY_APPS = ["rest_framework", "rest_framework.authtoken", "algoliasearch_django", "rest_framework_simplejwt",]
+THIRD_PARTY_APPS = ["rest_framework", "rest_framework.authtoken", "algoliasearch_django", "rest_framework_simplejwt", "corsheaders"]
 
 INSTALLED_APPS = BASE_APPS + THIRD_PARTY_APPS + PROJECT_APPS
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -62,6 +63,14 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = "cfehome.urls"
+CORS_URLS_REGEX = r"^/api/.*"
+
+CORS_ALLOWED_ORIGINS = []
+
+if DEBUG:
+    CORS_ALLOWED_ORIGINS += [
+        "http://localhost:8112",
+    ]
 
 TEMPLATES = [
     {
