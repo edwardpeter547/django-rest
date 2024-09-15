@@ -26,9 +26,53 @@ function handleLogin(event){
         return response.json()
     } )
     .then(data =>{
-        console.log(data)
+        handleAuthData(data);
+        getProducts();
     })
     .catch(err => {
         console.log('error', err)
     })
+}
+
+function handleAuthData(authData){
+    localStorage.setItem("access", authData.access);
+    localStorage.setItem("refresh", authData.refresh);
+}
+
+function getProducts(){
+    const endpoint = `${baseEndpoint}/products/`;
+    const method = "GET";
+    options = getFetchOptions(method);
+    fetch(endpoint, options)
+    .then(response => response.json())
+    .then(data =>{
+        console.log(data);
+        writeToDocument(data.results);
+    }).catch(err => {
+        console.log("error", err);
+    });
+}
+
+function getFetchOptions(method){
+    return {
+        method: method,
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem("access")}`
+        }
+    }
+}
+
+function writeToDocument(Data){
+    let productList = document.getElementById("productlist");
+    console.log(typeof(Data));
+    Data.forEach(element => {
+        const datapoint = document.createElement("div");
+        datapoint.innerHTML = `
+        <p>${element.body}</p>
+        <p>${element.price}</p>
+        `;
+        productList.appendChild(datapoint);
+    });
+
 }
